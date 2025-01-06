@@ -20,9 +20,9 @@ An ESP32-based RGB controller that serves dual purposes: a hands-on educational 
 - 0.96" SSD1306 OLED display - I2C (https://www.aliexpress.com/item/1005007389730469.html?spm)
 - WLED device
 
-### Pin Configuration
+## Pin Configuration
 
-#### Rotary Encoders
+### Rotary Encoders
 - Red: CLK (GPIO5), DT (GPIO7)
 - Green: CLK (GPIO35), DT (GPIO33)
 - Blue: CLK (GPIO36), DT (GPIO34)
@@ -127,7 +127,7 @@ Sends effect updates using WLED's effect indices:
 
 ## Supported WLED Effects
 
-I've only included 10 effects, but they're easy enough to add:
+I've only included 10 effects, but they're easy enough to add, just match them to WLED's built-in effects:
 1. Solid
 2. Android
 3. Rainbow
@@ -166,7 +166,7 @@ platformio device monitor
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgments
 
