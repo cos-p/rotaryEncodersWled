@@ -16,11 +16,9 @@ An ESP32-based RGB controller that serves dual purposes: a hands-on educational 
 ## Hardware Requirements
 
 - ESP32 development board (tested on ESP32-S2-Saola-1)
-- 4× Rotary encoders with push buttons
-- 0.96" SSD1306 OLED display (I2C)
-- WLED-compatible LED strip (controlled separately via WLED)
-- Power supply
-- Push buttons
+- 4× Rotary Encoder Module KY-040 (https://www.aliexpress.com/item/1005005559054521.html?spm)
+- 0.96" SSD1306 OLED display - I2C (https://www.aliexpress.com/item/1005007389730469.html?spm)
+- WLED device
 
 ### Pin Configuration
 
@@ -74,6 +72,7 @@ The project is structured into several key components:
 ### Configuration
 
 The `config.h` file contains all configurable parameters including:
+- DEBUG prints on/off setting
 - Pin definitions
 - Network settings
 - Display parameters
