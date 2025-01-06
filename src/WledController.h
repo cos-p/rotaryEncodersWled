@@ -43,9 +43,13 @@ void WLEDController::updateColor(int red, int green, int blue) {
 }
 
 void WLEDController::updateEffect(int effectIndex) {
-    if (WiFi.status() != WL_CONNECTED) return;
-
+    if (WiFi.status() != WL_CONNECTED) {
+        DEBUG_PRINTLN("WLED update skipped - WiFi not connected");
+        return;
+        }
+    DEBUG_PRINTF("Updating WLED effect to: %d (%s)\n", effectIndex, Effects::NAMES[effectIndex]);
     String url = String("http://") + NetworkConfig::WLED_IP + "/json/state";
+    DEBUG_PRINTF("WLED endpoint: %s\n", url.c_str());
     http.begin(url);
     http.addHeader("Content-Type", "application/json");
     
@@ -64,21 +68,21 @@ void WLEDController::updateEffect(int effectIndex) {
 void WLEDController::sendRequest(const String& jsonString) {
     unsigned long startTime = millis();
     
-    Serial.println("WLED Request Start --------");
-    Serial.println("Sending: " + jsonString);
+    DEBUG_PRINTLN("WLED Request Start --------");
+    DEBUG_PRINTLN("Sending: " + jsonString);
     
     int httpResponseCode = http.POST(jsonString);
     unsigned long duration = millis() - startTime;
     
-    Serial.printf("Request took: %lu ms\n", duration);
+    DEBUG_PRINTF("Request took: %lu ms\n", duration);
     
     if (httpResponseCode > 0) {
         String response = http.getString();
-        Serial.println("Response: " + response);
+        DEBUG_PRINTLN("Response: " + response);
     } else {
-        Serial.printf("Error %d: %s\n", httpResponseCode, http.errorToString(httpResponseCode).c_str());
+        DEBUG_PRINTF("Error %d: %s\n", httpResponseCode, http.errorToString(httpResponseCode).c_str());
     }
-    Serial.println("WLED Request End ----------\n");
+    DEBUG_PRINTLN("WLED Request End ----------\n");
     
     http.end();
 }

@@ -19,8 +19,8 @@ NetworkManager network;
 volatile bool encoderEvent = false;
 volatile int8_t encoderChanges[4] = {0};  // RED, GREEN, BLUE, EFFECT
 volatile uint8_t prevEncoderStates[4] = {0};  // RED, GREEN, BLUE, EFFECT
-volatile bool buttonStates[4] = {HIGH, HIGH, HIGH, HIGH};  // RED, GREEN, BLUE, EFFECT
-unsigned long lastButtonPress[4] = {0};  // Timestamps for button debouncing
+volatile bool buttonStates[Buttons::NUM_BUTTONS] = {HIGH, HIGH, HIGH, HIGH};
+unsigned long lastButtonPress[Buttons::NUM_BUTTONS] = {0};
 
 // Encoder interrupt handler
 void IRAM_ATTR handleEncoder(uint8_t pinA, uint8_t pinB, volatile uint8_t& prevState, int encoderIndex) {
@@ -43,29 +43,27 @@ void IRAM_ATTR handleBlueEncoder() { handleEncoder(Pins::BLUE_A, Pins::BLUE_B, p
 void IRAM_ATTR handleEffectEncoder() { handleEncoder(Pins::EFFECT_A, Pins::EFFECT_B, prevEncoderStates[3], 3); }
 
 // Generic button handler
-void IRAM_ATTR handleButton(uint8_t pin, uint8_t buttonIndex, uint8_t buttonId) {
+void IRAM_ATTR handleButton(uint8_t pin, Buttons::Index buttonIndex, Buttons::ID buttonId) {
     bool currentState = digitalRead(pin);
     unsigned long currentTime = millis();
     
-    if (currentTime - lastButtonPress[buttonIndex] > Timing::DEBOUNCE_DELAY) {
-        if (currentState == LOW && buttonStates[buttonIndex] == HIGH) {
-            delayMicroseconds(10);  // Short verification delay
+    if (currentTime - lastButtonPress[static_cast<uint8_t>(buttonIndex)] > Timing::DEBOUNCE_DELAY) {
+        if (currentState == LOW && buttonStates[static_cast<uint8_t>(buttonIndex)] == HIGH) {
+            delayMicroseconds(Buttons::VERIFY_DELAY_US);  // Using constant from config
             if (digitalRead(pin) == LOW) {
                 buttonQueue.push(buttonId, true, currentTime);
-                lastButtonPress[buttonIndex] = currentTime;
+                lastButtonPress[static_cast<uint8_t>(buttonIndex)] = currentTime;
             }
         }
-        buttonStates[buttonIndex] = currentState;
+        buttonStates[static_cast<uint8_t>(buttonIndex)] = currentState;
     }
 }
 
 // Individual button interrupt handlers
-void IRAM_ATTR handleRedButton() { handleButton(Pins::RED_BUTTON, 0, 1); }
-void IRAM_ATTR handleGreenButton() { handleButton(Pins::GREEN_BUTTON, 1, 2); }
-void IRAM_ATTR handleBlueButton() { handleButton(Pins::BLUE_BUTTON, 2, 3); }
-void IRAM_ATTR handleEffectButton() { 
-    handleButton(Pins::EFFECT_BUTTON, 3, 4);
-}
+void IRAM_ATTR handleRedButton() { handleButton(Pins::RED_BUTTON, Buttons::Index::RED_INDEX, Buttons::ID::RED_ID);}
+void IRAM_ATTR handleGreenButton() { handleButton(Pins::GREEN_BUTTON, Buttons::Index::GREEN_INDEX, Buttons::ID::GREEN_ID);}
+void IRAM_ATTR handleBlueButton() { handleButton(Pins::BLUE_BUTTON, Buttons::Index::BLUE_INDEX, Buttons::ID::BLUE_ID);}
+void IRAM_ATTR handleEffectButton() { handleButton(Pins::EFFECT_BUTTON, Buttons::Index::EFFECT_INDEX, Buttons::ID::EFFECT_ID);}
 
 void setupPins() {
     // Configure encoder pins
@@ -171,16 +169,16 @@ void processButtons() {
         DEBUG_PRINTF("Processing button %d press\n", event.button);
         
         switch (event.button) {
-            case 1:  // RED
+            case Buttons::ID::RED_ID:
                 stateManager.setRedPreset();
                 break;
-            case 2:  // GREEN
+            case Buttons::ID::GREEN_ID:
                 stateManager.setGreenPreset();
                 break;
-            case 3:  // BLUE
+            case Buttons::ID::BLUE_ID:
                 stateManager.setBluePreset();
                 break;
-            case 4:  // EFFECT
+            case Buttons::ID::EFFECT_ID:
                 stateManager.resetEffect();
                 break;
         }

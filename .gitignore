@@ -8,4 +8,4 @@
 test/*
 mainOld.cpp.txt
 EncoderManager.h
-src/config.h
+src/configActual.h

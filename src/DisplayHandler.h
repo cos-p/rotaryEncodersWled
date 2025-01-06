@@ -83,7 +83,7 @@ void DisplayHandler::updateDisplay(int redValue, int greenValue, int blueValue) 
     lastBlue = blueValue;
     
     // Debug print every update
-    Serial.printf("Display Update #%d - R:%d G:%d B:%d\n", 
+    DEBUG_PRINTF("Display Update #%d - R:%d G:%d B:%d\n", 
                  ++updateCount, redValue, greenValue, blueValue);
     
     display.clearDisplay();

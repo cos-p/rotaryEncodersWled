@@ -25,9 +25,9 @@ bool NetworkManager::begin() {
 }
 
 bool NetworkManager::setupWiFi() {
-    Serial.println("\nConnecting to WiFi...");
-    Serial.printf("SSID: %s\n", NetworkConfig::WIFI_SSID);
-    Serial.printf("Static IP: %s\n", NetworkConfig::STATIC_IP);
+    DEBUG_PRINTLN("\nConnecting to WiFi...");
+    DEBUG_PRINTF("SSID: %s\n", NetworkConfig::WIFI_SSID);
+    DEBUG_PRINTF("Static IP: %s\n", NetworkConfig::STATIC_IP);
     
     WiFi.mode(WIFI_STA);
     
@@ -40,7 +40,7 @@ bool NetworkManager::setupWiFi() {
     subnet_mask.fromString(NetworkConfig::SUBNET);
     
     if (!WiFi.config(local_ip, gateway_ip, subnet_mask)) {
-        Serial.println("Static IP Configuration Failed");
+        DEBUG_PRINTLN("Static IP Configuration Failed");
         return false;
     }
     
@@ -49,24 +49,25 @@ bool NetworkManager::setupWiFi() {
     int attempts = 0;
     while (WiFi.status() != WL_CONNECTED && attempts < 20) {
         delay(500);
-        Serial.print(".");
+        DEBUG_PRINT(".");
         attempts++;
     }
     
     if (WiFi.status() == WL_CONNECTED) {
-        Serial.println("\nWiFi connected successfully!");
-        Serial.print("IP address: ");
-        Serial.println(WiFi.localIP());
+        DEBUG_PRINTLN("\nWiFi connected successfully!");
+        DEBUG_PRINT("IP address: ");
+        DEBUG_PRINTLN(WiFi.localIP());
         return true;
     }
     
-    Serial.println("\nWiFi connection failed!");
+    DEBUG_PRINTLN("\nWiFi connection failed!");
     return false;
 }
 
 void NetworkManager::setupWebServer(StateManager& stateManager) {
     stateManagerPtr = &stateManager;  // Store the reference
     server.on("/api/status", HTTP_GET, [this](AsyncWebServerRequest *request) {
+        DEBUG_PRINTF("API Request from %s\n", request->client()->remoteIP().toString().c_str());
         JsonDocument doc; 
         const auto& color = stateManagerPtr->getColorState();
         doc["red"] = color.red;
@@ -79,6 +80,6 @@ void NetworkManager::setupWebServer(StateManager& stateManager) {
         serializeJson(doc, response);
         request->send(200, "application/json", response);
     });
-
+    DEBUG_PRINTLN("Web server routes configured");
     server.begin();
 }

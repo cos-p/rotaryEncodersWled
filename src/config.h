@@ -44,16 +44,40 @@ namespace Pins {
     constexpr int EFFECT_BUTTON = 8;
 }
 
+namespace Buttons {
+    constexpr size_t NUM_BUTTONS = 4;  // Number of buttons
+    enum class Index : uint8_t {
+        RED_INDEX = 0,
+        GREEN_INDEX = 1,
+        BLUE_INDEX = 2,
+        EFFECT_INDEX = 3,
+        BUTTON_COUNT = 4
+    };
+
+    enum class ID : uint8_t {
+        RED_ID = 1,
+        GREEN_ID = 2,
+        BLUE_ID = 3,
+        EFFECT_ID = 4
+    };
+
+    // Preset values for each button
+    constexpr int PRESET_VALUE = 150;  // Move the preset value here
+    
+    // Button timing configuration
+    constexpr unsigned long VERIFY_DELAY_US = 10;  // Microseconds delay for button verification
+}
+
 // Network Configuration
 namespace NetworkConfig {
-    constexpr char WIFI_SSID[] = "xxxxx";
-    constexpr char WIFI_PASSWORD[] = "xxxxx";
-    constexpr char STATIC_IP[] = "192.168.x.x";
-    constexpr char GATEWAY[] = "192.168.x.x";
-    constexpr char SUBNET[] = "255.255.255.0";
+    constexpr char WIFI_SSID[] = "your_ssid";
+    constexpr char WIFI_PASSWORD[] = "your_password";
+    constexpr char STATIC_IP[] = "your_static_ip";
+    constexpr char GATEWAY[] = "your_gateway";
+    constexpr char SUBNET[] = "your_subnet";
     
     // WLED Configuration
-    constexpr char WLED_IP[] = "192.168.x.x";
+    constexpr char WLED_IP[] = "your_wled_ip"; // IP of your WLED device
     constexpr int WLED_PORT = 80;
 }
 
@@ -67,26 +91,13 @@ namespace DisplayConfig {
 
 // Effect Names
 namespace Effects {
-    constexpr char* NAMES[] = {
+    constexpr const char* NAMES[] = {  // Added const
         "Solid", "Android", "Rainbow", "Chase", "Colorloop",
         "Dancing", "Fire", "Glitter", "Ocean", "Plasma"
     };
     constexpr int COUNT = 10;
 }
 
-// Timing Constants
-//pre splitting the encoder.
-// namespace Timing {
-//     constexpr unsigned long DEBOUNCE_DELAY = 50;
-//     constexpr unsigned long DISPLAY_UPDATE_INTERVAL = 16;  // ~60fps
-//     constexpr unsigned long WLED_UPDATE_INTERVAL = 20;     // 50fps - much more responsive
-// }
-
-// namespace Timing {
-//     constexpr unsigned long DEBOUNCE_DELAY = 50;
-//     constexpr unsigned long DISPLAY_UPDATE_INTERVAL = 33;  // ~30fps - more reasonable
-//     constexpr unsigned long WLED_UPDATE_INTERVAL = 100;    // Less frequent updates, more stable
-// }
 namespace Timing {
     constexpr unsigned long DEBOUNCE_DELAY = 50;
     constexpr unsigned long DISPLAY_UPDATE_INTERVAL = 33;   // ~30fps

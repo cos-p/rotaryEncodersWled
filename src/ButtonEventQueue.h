@@ -1,51 +1,48 @@
 #pragma once
-
 #include <Arduino.h>
+#include "config.h"
 
-// Debug information structure
-struct DebugInfo {
-    volatile uint32_t pushAttempts;
-    volatile uint32_t pushSuccess;
-    volatile uint32_t popAttempts;
-    volatile uint32_t popSuccess;
-    volatile uint32_t lastPushedButton;
-    volatile uint32_t lastProcessedButton;
-    volatile uint32_t interruptCalls;
-    volatile uint32_t debounceChecks;
-    
-    DebugInfo() : 
-        pushAttempts(0), 
-        pushSuccess(0), 
-        popAttempts(0), 
-        popSuccess(0),
-        lastPushedButton(0),
-        lastProcessedButton(0),
-        interruptCalls(0),
-        debounceChecks(0) {}
-};
-// // Add a flag to track color changes from buttons
 volatile bool colorChangedFromButton = false;
-// Button event structure
+
 struct ButtonEvent {
-    uint8_t button;      // RED = 1, GREEN = 2, BLUE = 3, EFFECT = 4
-    bool pressed;        // true for press, false for release
+    Buttons::ID button;  // Changed from uint8_t to enum
+    bool pressed;
     unsigned long timestamp;
     
-    // Copy constructor for volatile to non-volatile conversion
     ButtonEvent& operator=(const volatile ButtonEvent& other) {
-        button = other.button;
+        button = static_cast<Buttons::ID>(other.button);  // Safe casting
         pressed = other.pressed;
         timestamp = other.timestamp;
         return *this;
     }
 };
-
+// Button event queue
 class ButtonEventQueue {
 public:
-    ButtonEventQueue() : head(0), tail(0) {}
-    
-    // Push a new button event to the queue
-    bool push(uint8_t button, bool pressed, unsigned long timestamp) {
+    // Debug info structure update
+    struct DebugInfo {
+        volatile uint32_t pushAttempts;
+        volatile uint32_t pushSuccess;
+        volatile uint32_t popAttempts;
+        volatile uint32_t popSuccess;
+        volatile Buttons::ID lastPushedButton;     // Changed to enum
+        volatile Buttons::ID lastProcessedButton;  // Changed to enum
+        volatile uint32_t interruptCalls;
+        volatile uint32_t debounceChecks;
+        
+        DebugInfo() : 
+            pushAttempts(0), 
+            pushSuccess(0), 
+            popAttempts(0), 
+            popSuccess(0),
+            lastPushedButton(Buttons::ID::RED_ID),  // Initialize with default
+            lastProcessedButton(Buttons::ID::RED_ID),
+            interruptCalls(0),
+            debounceChecks(0) {}
+    };
+
+    // Update push method signature
+    bool push(Buttons::ID button, bool pressed, unsigned long timestamp) {
         debugInfo.pushAttempts++;
         int nextHead = (head + 1) % SIZE;
         
@@ -60,7 +57,6 @@ public:
         }
         return false;
     }
-    
     // Pop the next button event from the queue
     bool pop(ButtonEvent* event) {
         debugInfo.popAttempts++;
