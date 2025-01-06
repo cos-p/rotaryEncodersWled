@@ -16,8 +16,8 @@ An ESP32-based RGB controller that serves dual purposes: a hands-on educational 
 ## Hardware Requirements
 
 - ESP32 development board (tested on ESP32-S2-Saola-1)
-- 4× Rotary Encoder Module KY-040 (https://www.aliexpress.com/item/1005005559054521.html?spm)
-- 0.96" SSD1306 OLED display - I2C (https://www.aliexpress.com/item/1005007389730469.html?spm)
+- 4× Rotary Encoder Module KY-040 [link](https://www.aliexpress.com/item/1005005559054521.html?spm)
+- 0.96" SSD1306 OLED display - I2C [link](https://www.aliexpress.com/item/1005007389730469.html?spm)
 - WLED device
 
 ## Pin Configuration
@@ -28,13 +28,13 @@ An ESP32-based RGB controller that serves dual purposes: a hands-on educational 
 - Blue: CLK (GPIO36), DT (GPIO34)
 - Effect: CLK (GPIO4), DT (GPIO6)
 
-#### Push Buttons
+### Push Buttons
 - Red: GPIO9
 - Green: GPIO18
 - Blue: GPIO21
 - Effect: GPIO8
 
-#### Display
+### Display
 - SDA: GPIO2
 - SCL: GPIO3
 
